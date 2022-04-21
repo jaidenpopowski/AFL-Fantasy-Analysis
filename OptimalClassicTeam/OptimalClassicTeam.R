@@ -21,7 +21,7 @@ optimalteam <- function(uptoround) {
   numOfPlayers <- 22 # players on field
   numOfUnique <- 1 # players must be unique
   maxPrice <- 14800000 # total salary cap 2022
-  maxPriceOnField <- 13280000 # maximum salary cap on field (9 bench players worth $190,000 each)
+  maxPriceOnField <- 13280000 # maximum salary cap on field (8 bench players worth $190,000 each)
   maxdef <- 6 # number of defenders in classic team
   maxmid <- 8 # number of midfielders in classic team
   maxruc <- 2 # number of rucks in classic team
