@@ -3,6 +3,7 @@ library(tidyverse)
 library(ggrepel)
 
 average_comparison <- function(season,round) {
+  
   fw_hist <- fetch_player_stats_footywire((season-3):season)
   
   three_year_averages <- fw_hist %>% 
