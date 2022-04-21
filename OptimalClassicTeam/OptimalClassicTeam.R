@@ -1,0 +1,147 @@
+#install.packages('fitzRoy')
+library(fitzRoy)
+#install.packages('tidyverse')
+library(tidyverse)
+#install.packages('ggrepel')
+library(ggrepel)
+#install.packages('lpSolve')
+library(lpSolve)
+
+# import file from GitHub of 2022 Player Prices and respective positions
+import <- read_csv("2022 Player Prices and Positions.csv",show_col_types = FALSE)
+df_afl_current <- fetch_player_stats_afl(season=2022) # get latest AFL stats
+
+actualranks <- c(2281,4479,6620,8803,10948)
+
+# function for finding and showing the optimal AFL Fantasy team selection.
+# usage example: 'optimalteam(4) shows the optimal team as at the end of Round 4'
+optimalteam <- function(uptoround) {
+  # Setting the framework
+  numOfPlayers <- 22 # players on field
+  numOfUnique <- 1 # players must be unique
+  maxPrice <- 14800000 # total salary cap 2022
+  maxPriceOnField <- 13280000 # maximum salary cap on field (9 bench players worth $190,000 each)
+  maxdef <- 6 # number of defenders in classic team
+  maxmid <- 8 # number of midfielders in classic team
+  maxruc <- 2 # number of rucks in classic team
+  maxfwd <- 6 # number of forwards in classic team
+  
+  # Import data and stitch with current scores
+  round_data <- df_afl_current %>% 
+    mutate(Player = paste(player.givenName,player.surname)) %>% 
+    #mutate(afl_fantasy_calc = 3*kicks+2*handballs+3*marks+4*tackles+6*goals+1*behinds+1*hitouts+1*free_kicks_for+(-3)*free_kicks_against) %>% 
+    filter(as.integer(round.roundNumber)<=uptoround) %>% 
+    group_by(player.playerId,Player) %>% 
+    summarise(total_points = sum(dreamTeamPoints),games=n(),.groups='drop') %>% 
+    left_join(import,by="Player") %>% 
+    select(Player,total_points,games,salary_start,pos_def,pos_mid,pos_ruc,pos_fwd) %>% 
+    filter(!is.na(salary_start)) %>% 
+    filter(total_points>0) %>% 
+    arrange(desc(total_points))
+
+  # set up final dataframe
+  isplayer <- rep("1",nrow(round_data))
+  initialdata <- round_data %>% 
+    cbind(isplayer) %>% 
+    select(Player,total_points,salary_start,pos_def,pos_mid,pos_ruc,pos_fwd,isplayer) %>% 
+    cbind(diag(x=1,nrow = nrow(round_data),ncol=nrow(round_data)))
+  
+  df_wider <- t(initialdata) # transpose the data to get horizontal condition equations
+  
+  # setting in/equalities for constraints
+  const.basic <- data.frame(vals=c("<=",">=",">=",">=",">=","=="))
+  const.uniques <- data.frame(vals=c(rep("<=",nrow(df_wider)-8)))
+  directions <- rbind(const.basic,const.uniques)
+  
+  # setting right-hand-side values for constraints
+  rhs.basic <- data.frame(vals=c(maxPriceOnField,maxdef,maxmid,maxruc,maxfwd,numOfPlayers))
+  rhs.uniques <- data.frame(vals=c(rep("1",nrow(df_wider)-8)))
+  rhs <- rbind(rhs.basic,rhs.uniques)
+  
+  # linear programming algorithm
+  mod <- lp(direction="max",objective.in = (df_wider[2,]),const.mat=(df_wider[3:(nrow(df_wider)),]),const.dir=directions,const.rhs = rhs,all.int = TRUE,compute.sens = TRUE)
+  
+  answer <- mod[["solution"]] # row numbers of players in optimal solution
+  solution <-  cbind(answer,initialdata) # add the binary solution column to the original dataset
+  
+  # show the final team and print Total Points and Remaining Salary
+  finalteam <- solution %>% 
+    filter(answer==1) %>% # only show players in solution
+    arrange(desc(pos_def),(pos_fwd),desc(pos_mid),(pos_fwd),desc(pos_ruc),desc(pos_fwd),desc(salary_start)) # fancy arrangement to try and get team structure
+  solution_points = sum(finalteam$total_points)+max(finalteam$total_points) #
+  salaryremaining <- maxPriceOnField-sum(finalteam$salary_start)
+  print(paste("Remaining Salary from Round 1: $",salaryremaining,sep=""))
+  print(paste("Total Points after Round ",uptoround,": ",solution_points,sep=""))
+  print(paste("Currently",solution_points-actualranks[uptoround],"points in front of the #1 ranked team"))
+  View(finalteam)
+  
+  # plot all players and add names to the ones in the optimal team
+  ggplot(solution) +
+    geom_point(aes(x=salary_start,y=total_points,color=paste(pos_def,pos_ruc,pos_fwd))) +
+    geom_smooth(aes(x=salary_start,y=total_points),color='gray',formula=y~x,method='lm',se=FALSE) +
+    geom_text_repel(aes(x=salary_start,y=total_points,color=paste(pos_def,pos_ruc,pos_fwd),label=ifelse(answer==1,Player,element_blank()))) +
+    labs(x="Starting Price",y="Total Points",caption="#rstats @jaiden_popowski") +
+    theme_bw() +
+    theme(legend.position = 'none')
+}
+
+antiteam <- function(uptoround) {
+  # Setting the framework
+  numOfPlayers <- 22 # players on field
+  numOfUnique <- 1 # players must be unique
+  maxPrice <- 14800000 # total salary cap 2022
+  maxPriceOnField <- 13280000 # maximum salary cap on field (9 bench players worth $190,000 each)
+  minPriceOnField <- 13000000 # minimum salary cap on field (used if minimising)
+  maxdef <- 6 # number of defenders in classic team
+  maxmid <- 8 # number of midfielders in classic team
+  maxruc <- 2 # number of rucks in classic team
+  maxfwd <- 6 # number of forwards in classic team
+  
+  # import data and stitch with current scores
+  round_data <- df_fryzigg_current %>% 
+    mutate(Player = paste(player_first_name,player_last_name)) %>% 
+    mutate(afl_fantasy_calc = 3*kicks+2*handballs+3*marks+4*tackles+6*goals+1*behinds+1*hitouts+1*free_kicks_for+(-3)*free_kicks_against) %>% 
+    filter(afl_fantasy_calc>0) %>% 
+    filter(as.integer(match_round)<=uptoround) %>% 
+    group_by(player_id,Player) %>% 
+    summarise(total_points = sum(afl_fantasy_calc),n=n(),.groups='drop') %>% 
+    filter(n==uptoround) %>% 
+    left_join(import,by="Player") %>% 
+    select(-n,-player_id,-total_points_3,-Average_3,-score_3) %>% 
+    filter(!is.na(salary_start)) %>% 
+    arrange(desc(total_points))
+  
+  # set up
+  isplayer <- rep("1",nrow(round_data))
+  initialdata <- round_data %>% 
+    cbind(isplayer) %>% 
+    select(Player,total_points,salary_start,pos_def,pos_mid,pos_ruc,pos_fwd,isplayer) %>% 
+    cbind(diag(x=1,nrow = nrow(round_data),ncol=nrow(round_data)))
+  
+  df_wider <- t(initialdata) # transpose the data to get horizontal condition equations
+  
+  # setting in/equalities for constraints
+  const.basic <- data.frame(vals=c(">=",">=",">=",">=",">=","=="))
+  const.uniques <- data.frame(vals=c(rep("<=",nrow(df_wider)-8)))
+  directions <- rbind(const.basic,const.uniques)
+  
+  # setting right-hand-side values for constraints
+  rhs.basic <- data.frame(vals=c(minPriceOnField,maxdef,maxmid,maxruc,maxfwd,numOfPlayers))
+  rhs.uniques <- data.frame(vals=c(rep("1",nrow(df_wider)-8)))
+  rhs <- rbind(rhs.basic,rhs.uniques)
+  
+  mod <- lp(direction="min",objective.in = (df_wider[2,]),const.mat=(df_wider[3:(nrow(df_wider)),]),const.dir=directions,const.rhs = rhs,all.int = TRUE,compute.sens = TRUE)
+  
+  answer <- mod[["solution"]] # row numbers of players in optimal solution
+  solution <-  cbind(answer,initialdata) # add the binary solution column to the original dataset
+  
+  # show the final team and print Total Points and Remaining Salary
+  finalteam <- solution %>% 
+    filter(answer==1) %>% # only show players in solution
+    arrange(desc(pos_def),(pos_fwd),desc(pos_mid),(pos_fwd),desc(pos_ruc),desc(pos_fwd),desc(salary_start)) # fancy arrangement to try and get team structure
+  solution_points = sum(finalteam$total_points)+min(finalteam$total_points) #
+  salaryremaining <- maxPriceOnField-sum(finalteam$salary_start)
+  print(paste("Total Points after Round ",uptoround,": ",solution_points,sep=""))
+  print(paste("Remaining Salary: $",salaryremaining,sep=""))
+  View(finalteam)
+}
