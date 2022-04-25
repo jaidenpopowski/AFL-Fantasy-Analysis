@@ -63,7 +63,7 @@ average_comparison <- function(season,round) {
          title="AFL Fantasy Average compared to last three years",
          subtitle=paste("Data from www.footywire.com. Statistics up to Round ",round,", ",season,sep=""),
          caption="Code from jaidenpopowski (GitHub)") +
-    scale_colour_manual(values=team_colours_full) +
+    scale_colour_manual(values=team_colours) +
     theme_bw() +
     theme(legend.position = 'none') 
 }
