@@ -3,7 +3,7 @@ Want to assess your own AFL Fantasy drafting skills this year? This program can 
 
 ## Usage
 * Ensure you have the three required packages installed (lines 1-3). You can do this using install.packages("fitzRoy"), for example.
-* Run each line to import the data. 
+* Run each line to import the data (Ctrl + Enter is a great shortcut!)
   	* Line 4 gets the latest data from the AFL
   	* Line 5 imports the ADP data I took just before Round 1.
   	* Line 8 has team colours, credit to @crow_data_sci
