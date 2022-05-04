@@ -45,7 +45,7 @@ draft_analysis <- function(uptoround) {
   df_adps$points_diff <- round(df_adps$total_points - df_adps$predicted,1)
   
   output <- df_adps %>% 
-    select(player,team.name,adp,total_points,predicted,points_diff) %>% 
+    select(player,team.name,onepos,adp,total_points,predicted,points_diff) %>% 
     arrange(desc(points_diff))
   
   View(output)
