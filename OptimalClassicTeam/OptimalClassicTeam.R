@@ -11,8 +11,7 @@ library(lpSolve)
 import <- read_csv("2022 Player Prices and Positions.csv",show_col_types = FALSE)
 df_afl_current <- fetch_player_stats_afl(season=2022) # get latest AFL stats
 
-# Top-ranked player's total points for each round
-actualranks <- c(2281,4479,6620,8803,10948)
+actualranks <- c(2281,4479,6620,8803,10948,13107,15434,17528)
 
 # function for finding and showing the optimal AFL Fantasy team selection.
 # usage example: 'optimalteam(4) shows the optimal team as at the end of Round 4'
@@ -81,7 +80,9 @@ optimalteam <- function(uptoround) {
     geom_point(aes(x=salary_start,y=total_points,color=paste(pos_def,pos_ruc,pos_fwd))) +
     geom_smooth(aes(x=salary_start,y=total_points),color='gray',formula=y~x,method='lm',se=FALSE) +
     geom_text_repel(aes(x=salary_start,y=total_points,color=paste(pos_def,pos_ruc,pos_fwd),label=ifelse(answer==1,Player,element_blank()))) +
-    labs(x="Starting Price",y="Total Points",caption="#rstats @jaiden_popowski") +
+    labs(x="Starting Price",y="Total Points",caption="#rstats @jaiden_popowski",
+         title=paste("Set and Forget AFL Fantasy starting team up to Round",uptoround),
+         subtitle=paste0(finalteam$Player[finalteam$total_points==max(finalteam$total_points)]," captain; no trades. $190k players on bench leaves $",salaryremaining/1000,"k spare. Currently winning overall by ",solution_points-actualranks[uptoround]," points.")) +
     theme_bw() +
     theme(legend.position = 'none')
 }
