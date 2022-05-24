@@ -11,7 +11,7 @@ library(lpSolve)
 import <- read_csv("2022 Player Prices and Positions.csv",show_col_types = FALSE)
 df_afl_current <- fetch_player_stats_afl(season=2022) # get latest AFL stats
 
-actualranks <- c(2281,4479,6620,8803,10948,13107,15434,17528)
+actualranks <- c(2281,4479,6620,8803,10948,13107,15434,17528,19679,22014)
 
 # function for finding and showing the optimal AFL Fantasy team selection.
 # usage example: 'optimalteam(4) shows the optimal team as at the end of Round 4'
