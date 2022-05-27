@@ -1,5 +1,5 @@
 # About me!
-- Hi, I’m @jaidenpopowski, and welcome to my page. I'm 20 and based in Tasmania
+- Hi, I’m Jaiden Popowski, and welcome to my page. I'm 20 and based in Tasmania
 - I’m interested in R programming and data visualisation
 - I'm currently in my third and final year of a Bachelor of Science at UTas (double major in Mathematics and Statistics & Operations Research)
 - I post AFL Fantasy related statistics and relevant data visualisations on <a href="https://twitter.com/jaiden_popowski">my Twitter</a> using my R, dplyr, and ggplot2 skills
