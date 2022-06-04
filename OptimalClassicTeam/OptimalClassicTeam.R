@@ -28,7 +28,6 @@ optimalteam <- function(uptoround) {
   # Import data and stitch with current scores
   player_data <- df_afl_current %>% 
     mutate(Player = paste(player.givenName,player.surname)) %>% 
-    #mutate(afl_fantasy_calc = 3*kicks+2*handballs+3*marks+4*tackles+6*goals+1*behinds+1*hitouts+1*free_kicks_for+(-3)*free_kicks_against) %>% 
     filter(as.integer(round.roundNumber)<=uptoround) %>% 
     group_by(player.playerId,Player) %>% 
     summarise(
