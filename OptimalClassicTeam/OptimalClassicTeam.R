@@ -76,7 +76,7 @@ optimalteam <- function(uptoround) {
          title=paste("Set and Forget AFL Fantasy starting team up to Round",uptoround),
          subtitle=paste0(finalteam$Player[finalteam$total_points==max(finalteam$total_points)],
                          " captain; no trades. $190k players on bench leaves $",salaryremaining/1000,
-                         "k spare. Currently ",ifelse(solution_points-actualrank[uptoround]>0,"winning","behind"), " overall by ",abs(solution_points-actualranks[uptoround])," points.")) +
+                         "k spare. Currently ",ifelse(solution_points-actualranks[uptoround]>0,"winning","behind"), " overall by ",abs(solution_points-actualranks[uptoround])," points.")) +
     theme_bw() +
     theme(legend.position = 'none')
 }
