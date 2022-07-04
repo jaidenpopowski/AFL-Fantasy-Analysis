@@ -11,10 +11,10 @@ library(lpSolve)
 import <- read_csv("2022 Player Prices and Positions.csv",show_col_types = FALSE)
 df_afl_current <- fetch_player_stats_afl(season=2022) # get latest AFL stats
 
-actualranks <- c(2281,4479,6620,8803,10948,13107,15434,17528,19679,22014,24374)
+actualranks <- c(2281,4479,6620,8803,10948,13107,15434,17528,19679,22014,24374,26290,28022,29860,32187,34575)
 
 # function for finding and showing the optimal AFL Fantasy team selection.
-# usage example: 'optimalteam(4)' shows the optimal team as at the end of Round 4
+# usage example: 'optimalteam(4) shows the optimal team as at the end of Round 4'
 optimalteam <- function(uptoround) {
   # Setting the framework
   numOfPlayers <- 22 # players on field
@@ -28,6 +28,7 @@ optimalteam <- function(uptoround) {
   # Import data and stitch with current scores
   player_data <- df_afl_current %>% 
     mutate(Player = paste(player.givenName,player.surname)) %>% 
+    #mutate(afl_fantasy_calc = 3*kicks+2*handballs+3*marks+4*tackles+6*goals+1*behinds+1*hitouts+1*free_kicks_for+(-3)*free_kicks_against) %>% 
     filter(as.integer(round.roundNumber)<=uptoround) %>% 
     group_by(player.playerId,Player) %>% 
     summarise(
@@ -57,7 +58,7 @@ optimalteam <- function(uptoround) {
   # show the final team and print Total Points and Remaining Salary
   finalteam <- solution %>% 
     filter(answer==1) %>% # only show players in solution
-    select(-answer) %>% 
+    select(-answer,-isplayer) %>% 
     arrange(desc(pos_def),(pos_fwd),desc(pos_mid),(pos_fwd),desc(pos_ruc),desc(pos_fwd),desc(salary_start)) # fancy arrangement to try and get team structure
   solution_points = sum(finalteam$total_points)+max(finalteam$total_points) #
   salaryremaining <- maxPriceOnField-sum(finalteam$salary_start)
@@ -75,7 +76,7 @@ optimalteam <- function(uptoround) {
          title=paste("Set and Forget AFL Fantasy starting team up to Round",uptoround),
          subtitle=paste0(finalteam$Player[finalteam$total_points==max(finalteam$total_points)],
                          " captain; no trades. $190k players on bench leaves $",salaryremaining/1000,
-                         "k spare. Currently winning overall by ",solution_points-actualranks[uptoround]," points.")) +
+                         "k spare. Currently ",ifelse(solution_points-actualrank[uptoround]>0,"winning","behind"), " overall by ",abs(solution_points-actualranks[uptoround])," points.")) +
     theme_bw() +
     theme(legend.position = 'none')
 }
