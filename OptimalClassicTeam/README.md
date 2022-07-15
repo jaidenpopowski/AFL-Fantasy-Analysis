@@ -8,5 +8,5 @@ To get around this, manually edit problematic players to a single position until
 - The captain is set to the highest scoring player on the team. This happens after the team is made, but hypotheically, it could be possible that there is a better team if captain is selected first.
 
 # Program usage
-Run all parts of the code to initialise functions and ensure you have the required packages. Then, type 'optimalteam(uptoround)' in the command window with the variable uptoround being the last round of data you want included.
+Run all parts of the code to initialise functions and ensure you have the required packages. Then, type 'optimalteam(uptoround)' in the R console with the variable uptoround being the last round of data you want included.
 For example, optimalteam(4) will show you the optimal starting team at the conclusion of Round 4. So using all data up to and including Round 4, it finds the best possible starting team.
