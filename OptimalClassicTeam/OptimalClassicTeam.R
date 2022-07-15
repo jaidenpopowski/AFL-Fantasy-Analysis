@@ -11,8 +11,6 @@ library(lpSolve)
 import <- read_csv("2022 Player Prices and Positions.csv",show_col_types = FALSE)
 df_afl_current <- fetch_player_stats_afl(season=2022) # get latest AFL stats
 
-actualranks <- c(2281,4479,6620,8803,10948,13107,15434,17528,19679,22014,24374,26290,28022,29860,32187,34575)
-
 # function for finding and showing the optimal AFL Fantasy team selection.
 # usage example: 'optimalteam(4) shows the optimal team as at the end of Round 4'
 optimalteam <- function(uptoround) {
@@ -24,6 +22,7 @@ optimalteam <- function(uptoround) {
   maxmid <- 8 # number of midfielders in classic team
   maxruc <- 2 # number of rucks in classic team
   maxfwd <- 6 # number of forwards in classic team
+  actualranks <- c(2281,4479,6620,8803,10948,13107,15434,17528,19679,22014,24374,26290,28022,29860,32187,34575,36953)
   
   # Import data and stitch with current scores
   player_data <- df_afl_current %>% 
@@ -33,7 +32,7 @@ optimalteam <- function(uptoround) {
     group_by(player.playerId,Player) %>% 
     summarise(
       total_points = sum(dreamTeamPoints),
-      games=n(),
+      games = n(),
       .groups='drop') %>% 
     left_join(import,by="Player") %>% 
     filter(!is.na(salary_start),total_points>0) %>% 
