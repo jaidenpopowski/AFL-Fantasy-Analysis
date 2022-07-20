@@ -66,7 +66,7 @@ optimalteam <- function(uptoround) {
   salary_remaining = maxPriceOnField-sum(finalteam$salary_start)
   print(paste0("Remaining Salary from Round 1: $",salary_remaining))
   print(paste0("Total Points after Round ",uptoround,": ",solution_points))
-  print(paste("Currently",solution_points-actualranks[uptoround],"points",ifelse(solution_points>=actualranks[uptoround],"in front of","behind"),"the #1 ranked team"))
+  print(paste("Currently",abs(solution_points-actualranks[uptoround]),"points",ifelse(solution_points>=actualranks[uptoround],"in front of","behind"),"the #1 ranked team"))
   
   
   # plot all players and add names to the ones in the optimal team
