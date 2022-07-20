@@ -23,6 +23,3 @@ I've been playing AFL Fantasy since I was old enough to use a computer. Calculat
 
 # Data collection
 Open-source data is a big part of the amateur AFL data analysis community. My data comes from the R package 'fitzRoy', created by James Day. You can learn more about the package here: https://cran.r-project.org/web/packages/fitzRoy/index.html.
-
-# Code
-My code is written in R. Feel free to use it for your own research - that's the main point of this repository!
