@@ -52,5 +52,3 @@ fetch_round_prices <- function(Season,Round,Position,Game) {
     )
   }
 }
-
-prices <- fetch_player_prices(season = 2016, game = "dream_team")
