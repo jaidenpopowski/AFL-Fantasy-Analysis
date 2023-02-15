@@ -8,7 +8,7 @@ library(ggrepel)
 library(lpSolve)
 
 # import data
-import <- read_csv("2022 Player Prices and Positions.csv",show_col_types = FALSE) # prices and positions from GitHub file
+import <- read_csv("https://raw.githubusercontent.com/jaidenpopowski/AFL-Fantasy-Analysis/main/OptimalClassicTeam/2022%20Player%20Prices%20and%20Positions.csv",show_col_types = FALSE) # prices and positions from GitHub file
 df_afl_current <- fetch_player_stats_afl(season=2022) # get latest AFL stats (takes ~30 seconds)
 
 actualranks <- c(2281,4479,6620,8803,10948,13107,15434,17528,19679,22014,24374,26290,28022,29860,32187,34575,36953,39296,41796,44173,46495,48805,50996) # total points of overall leader
