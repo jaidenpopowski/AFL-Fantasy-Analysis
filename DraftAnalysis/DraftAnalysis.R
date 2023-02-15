@@ -2,7 +2,7 @@ library(tidyverse)
 library(ggrepel)
 library(fitzRoy)
 
-afl_2022 <- fetch_player_stats_afl()
+afl_2022 <- fetch_player_stats_afl(season = 2022)
 adps_2022 <- read_csv("https://raw.githubusercontent.com/jaidenpopowski/AFL-Fantasy-Analysis/main/DraftAnalysis/2022adps.csv",show_col_types = FALSE)
 
 team_colours_full <- c(
