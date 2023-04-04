@@ -1,6 +1,6 @@
 # Web scraping functions for AFL Fantasy and SuperCoach
 
-## use `source("")` to load these functions into your R session.
+## use `source("https://raw.githubusercontent.com/jaidenpopowski/AFL-Fantasy-Analysis/main/fantasyR/functions.R")` to load these functions into your R session.
 
 fetch_player_prices <- function(season = lubridate::year(Sys.Date()), round = c(1:24), game = "dream_team") {
   
